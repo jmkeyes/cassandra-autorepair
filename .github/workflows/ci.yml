@@ -1,5 +1,5 @@
 ---
-name: CI
+name: ci
 
 on:
   push:
@@ -11,15 +11,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - name: checkout
+      uses: actions/checkout@v5
 
-    - name: Setup
+    - name: setup
       uses: actions/setup-go@v6
       with:
         go-version-file: 'go.mod'
 
-    - name: Build
-      run: go build -v ./...
 
-    - name: Test
+    - name: test
       run: go test -v ./...
+
+    - name: build
+      run: go build -v ./...
