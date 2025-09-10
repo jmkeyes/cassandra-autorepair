@@ -106,7 +106,7 @@ func main() {
 				continue
 			}
 
-			log.Printf("Started repair of %s/%s [%s]\n", pod.ObjectMeta.Namespace, pod.Name, container)
+			log.Printf("Started repair of %s/%s [%s]\n", pod.Namespace, pod.Name, container)
 
 			// Set up the request we need to exec into the pod.
 			req := clientSet.CoreV1().RESTClient().Post().Resource("pods").
@@ -132,11 +132,19 @@ func main() {
 
 			// Create a pipe for reading the command output.
 			reader, writer := io.Pipe()
-			defer reader.Close()
+			defer func() {
+				if err := reader.Close(); err != nil {
+					log.Fatalf("Unable to close pipe reader: %+v", err)
+				}
+			}()
 
 			// Consume the command output.
 			go func() {
-				defer writer.Close()
+				defer func() {
+					if err := writer.Close(); err != nil {
+						log.Fatalf("Unable to close pipe writer: %+v", err)
+					}
+				}()
 
 				streamOptions := remotecommand.StreamOptions{
 					Stdin:  nil,
@@ -156,7 +164,7 @@ func main() {
 				log.Printf("   %s\n", scanner.Text())
 			}
 
-			log.Printf("Finished repair of %s/%s [%s]\n", pod.ObjectMeta.Namespace, pod.Name, container)
+			log.Printf("Finished repair of %s/%s [%s]\n", pod.Namespace, pod.Name, container)
 		}
 	}
 }
