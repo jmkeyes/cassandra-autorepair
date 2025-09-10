@@ -19,6 +19,8 @@ jobs:
       with:
         go-version-file: 'go.mod'
 
+    - name: lint
+      uses: golangci/golangci-lint-action@v8
 
     - name: test
       run: go test -v ./...
