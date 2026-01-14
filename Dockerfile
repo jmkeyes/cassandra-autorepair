@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG GOLANG_VERSION=1.23
+ARG GOLANG_VERSION=1.25
 
 # Build container should always be on the native build platform.
 FROM --platform=$BUILDPLATFORM golang:${GOLANG_VERSION} AS builder
